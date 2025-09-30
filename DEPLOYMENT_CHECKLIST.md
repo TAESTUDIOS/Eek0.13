@@ -56,12 +56,18 @@ Go to: Project Settings → Environment Variables
 - [ ] Click "Save Settings"
 - [ ] Verify settings are saved (refresh page)
 
-## Verify Cron Job
+## Setup n8n Scheduler
 
-- [ ] Go to Vercel Dashboard → Project → Cron Jobs
-- [ ] Verify cron job exists: `/api/scheduler/tick` every minute
-- [ ] Check "Logs" tab for cron executions
-- [ ] Should see executions every minute
+- [ ] Open n8n instance
+- [ ] Create new workflow: "PSA Scheduler"
+- [ ] Add Schedule Trigger node (every 1 minute)
+- [ ] Add HTTP Request node:
+  - URL: `https://your-app.vercel.app/api/scheduler/tick`
+  - Header: `X-Scheduler-Token: FDS46eDFH43gdsDFGH4hgdhdfh`
+- [ ] Activate workflow
+- [ ] Check n8n Executions tab
+- [ ] Verify executions run every minute
+- [ ] Check HTTP response shows `ok: true`
 
 ## Test Reminders
 
@@ -85,10 +91,11 @@ Go to: Project Settings → Environment Variables
 
 ## Troubleshooting
 
-### If cron not visible in Vercel:
-1. Check `vercel.json` is in root of repository
-2. Redeploy the project
-3. Check Vercel build logs for errors
+### If n8n scheduler not running:
+1. Check workflow is **Activated** (toggle at top)
+2. Verify Schedule Trigger is set to "Every 1 minute"
+3. Check n8n error logs in Executions tab
+4. Test HTTP Request manually in n8n
 
 ### If reminders not firing:
 1. Check Vercel Function logs for `/api/scheduler/tick`
@@ -111,8 +118,9 @@ Go to: Project Settings → Environment Variables
 - [ ] App loads at Vercel URL
 - [ ] Can create appointments in `/schedule`
 - [ ] Settings page shows webhook URL
-- [ ] Cron job appears in Vercel dashboard
-- [ ] Cron executes every minute (check logs)
+- [ ] n8n scheduler workflow is active
+- [ ] n8n executions run every minute
+- [ ] Scheduler returns `ok: true` response
 - [ ] Test reminder triggers webhook
 - [ ] n8n receives notification payload
 

@@ -47,12 +47,18 @@ NEXT_PUBLIC_BASE_URL=https://your-app.vercel.app
 APP_ORIGIN=https://your-app.vercel.app
 ```
 
-### 4. Verify Cron is Running
+### 4. Setup n8n Scheduler
 
-After deployment:
-1. Go to Project Settings → Cron Jobs
-2. You should see: `/api/scheduler/tick` running every minute (`* * * * *`)
-3. Check logs to verify it's executing
+Since Vercel free tier doesn't support minute-level cron jobs, use n8n:
+
+1. Create new workflow in n8n: "PSA Scheduler"
+2. Add **Schedule Trigger** node (every 1 minute)
+3. Add **HTTP Request** node:
+   - URL: `https://your-app.vercel.app/api/scheduler/tick`
+   - Header: `X-Scheduler-Token: FDS46eDFH43gdsDFGH4hgdhdfh`
+4. Activate the workflow
+
+See **N8N_SCHEDULER_SETUP.md** for detailed instructions and workflow JSON.
 
 ### 5. Configure Webhook in App
 
@@ -72,14 +78,15 @@ After deployment:
 - ❌ No .next build folder (Vercel builds automatically)
 - ❌ No .env.local (set in Vercel dashboard)
 
-## Automatic Features on Vercel
+## How It Works After Deployment
 
-Once deployed, these work automatically:
+Once deployed and n8n scheduler is active:
 
-1. **Scheduler runs every minute** - via vercel.json cron
-2. **Reminders trigger at configured times** - scheduler checks appointments
-3. **Webhooks are called** - notifications sent to your n8n instance
-4. **Database persistence** - using your Neon/Postgres connection
+1. **n8n triggers scheduler every minute** - via Schedule Trigger workflow
+2. **Scheduler checks for due reminders** - queries appointments database
+3. **Reminders trigger at configured times** - calls reminders API
+4. **Webhooks are called** - notifications sent to your n8n webhook
+5. **Database persistence** - using your Neon/Postgres connection
 
 ## Testing After Deployment
 
@@ -90,10 +97,11 @@ Once deployed, these work automatically:
 
 ## Troubleshooting
 
-**Cron not running?**
-- Check Vercel dashboard → Project → Cron Jobs
-- Verify `vercel.json` is in the root
-- Check deployment logs for errors
+**Scheduler not running?**
+- Check n8n workflow is **Activated**
+- Verify n8n executions show runs every minute
+- Check HTTP Request response in n8n execution logs
+- Verify `SCHEDULER_TOKEN` matches in both places
 
 **Reminders not firing?**
 - Verify `SCHEDULER_TOKEN` is set in Vercel

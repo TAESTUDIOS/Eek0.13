@@ -38,10 +38,23 @@ Click "Save" and **Redeploy** the project.
 3. Set webhook: `https://wb87020.vps.webdock.cloud/webhook/ntf`
 4. Click "Save Settings"
 
+## Step 5: Setup n8n Scheduler (1 min)
+
+Since Vercel free tier doesn't support minute-level cron, use n8n:
+
+1. Create new n8n workflow
+2. Add **Schedule Trigger** (every 1 minute)
+3. Add **HTTP Request**:
+   - URL: `https://your-app.vercel.app/api/scheduler/tick`
+   - Header: `X-Scheduler-Token: FDS46eDFH43gdsDFGH4hgdhdfh`
+4. Activate workflow
+
+See `N8N_SCHEDULER_SETUP.md` for detailed steps.
+
 ## Done! 🎉
 
 Your app is now live with:
-- ✅ Automatic scheduler running every minute
+- ✅ n8n triggering scheduler every minute
 - ✅ Appointment reminders via webhook
 - ✅ Database persistence
 - ✅ All features working

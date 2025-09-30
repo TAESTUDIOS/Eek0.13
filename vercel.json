@@ -1,8 +1,7 @@
 {
-  "crons": [
-    {
-      "path": "/api/scheduler/tick",
-      "schedule": "* * * * *"
+  "functions": {
+    "app/api/scheduler/tick/route.ts": {
+      "maxDuration": 10
     }
-  ]
+  }
 }
